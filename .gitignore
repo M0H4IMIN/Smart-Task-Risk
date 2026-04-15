@@ -42,3 +42,6 @@ htmlcov/
 *.pkl
 *.joblib
 models/
+
+# Added: explicitly ensure .env is ignored
+.env
