@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
-from routers import auth, tasks, sessions, users
+from routers import auth, tasks, sessions, users, predict
 
 Base.metadata.create_all(bind=engine)
 
@@ -23,6 +23,7 @@ app.include_router(auth.router)
 app.include_router(tasks.router)
 app.include_router(sessions.router)
 app.include_router(users.router)
+app.include_router(predict.router)
 
 
 @app.get("/health")

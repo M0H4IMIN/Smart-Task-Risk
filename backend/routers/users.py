@@ -1,6 +1,9 @@
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from datetime import datetime
 
 from database import get_db
 from auth import get_current_user
@@ -16,15 +19,18 @@ def get_my_stats(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
-    """
-    Returns the current user's behavioral fingerprint.
-    This is what the ML model will use as input features.
-    """
     stats = db.query(models.UserStats).filter(
         models.UserStats.user_id == current_user.id
     ).first()
-
     if not stats:
-        raise HTTPException(status_code=404, detail="Stats not found")
-
+        raise HTTPException(status_code=404, detail="Stats not found. Try registering again.")
     return stats
+
+
+@router.post("/me/stats/recalculate", response_model=schemas.UserStatsResponse)
+def force_recalculate(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    """Force a full stats recalculation. Use this if values look wrong or zero."""
+    return recalculate_user_stats(user_id=current_user.id, db=db)
