@@ -1,5 +1,5 @@
 // Base API client — all requests go through here
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = "https://smart-task-risk-backend.onrender.com";
 
 function getToken() {
   return localStorage.getItem("token");
