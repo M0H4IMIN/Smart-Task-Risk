@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = "https://smart-task-risk-backend.onrender.com";
 
 export default function ChatPanel({ onClose }) {
   const [messages, setMessages] = useState([
