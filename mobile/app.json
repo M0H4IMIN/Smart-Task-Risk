@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "smart-task-risk",
+    "slug": "smart-task-risk",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "smart-task-risk",
+    "platforms": ["ios", "android", "web"],
+    "assetBundlePatterns": ["**/*"]
+  }
+}

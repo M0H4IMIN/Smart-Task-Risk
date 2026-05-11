@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
-from routers import auth, tasks, sessions, users, predict
+from routers import auth, tasks, sessions, users, predict, chat
 
 Base.metadata.create_all(bind=engine)
 
@@ -13,7 +13,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000", "http://localhost:8081", "http://localhost:19006"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -24,6 +24,7 @@ app.include_router(tasks.router)
 app.include_router(sessions.router)
 app.include_router(users.router)
 app.include_router(predict.router)
+app.include_router(chat.router)
 
 
 @app.get("/health")

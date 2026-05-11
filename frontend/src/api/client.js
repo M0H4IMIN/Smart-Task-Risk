@@ -7,37 +7,17 @@ function getToken() {
 
 async function request(path, options = {}) {
   const token = getToken();
-
-  // FIX: start with default headers, then let caller override them
-  const defaultHeaders = { "Content-Type": "application/json" };
-  if (token) defaultHeaders["Authorization"] = `Bearer ${token}`;
-
-  const headers = { ...defaultHeaders, ...(options.headers || {}) };
+  const headers = { "Content-Type": "application/json" };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
 
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
-    headers,
+    headers: { ...headers, ...(options.headers || {}) },
   });
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: "Unknown error" }));
-
-    // FastAPI can return detail as:
-    // 1. A string:  { detail: "Email already registered" }
-    // 2. A list:    { detail: [{ msg: "field required", loc: [...] }] }
-    // 3. Missing:   {}
-    let message = "Request failed";
-    if (err.detail) {
-      if (typeof err.detail === "string") {
-        message = err.detail;
-      } else if (Array.isArray(err.detail)) {
-        // Join all validation error messages
-        message = err.detail.map(e => e.msg || JSON.stringify(e)).join(", ");
-      } else {
-        message = JSON.stringify(err.detail);
-      }
-    }
-    throw new Error(message);
+    throw new Error(err.detail || "Request failed");
   }
 
   if (res.status === 204) return null;
@@ -46,17 +26,10 @@ async function request(path, options = {}) {
 
 // Auth
 export const register = (data) =>
-  request("/api/v1/auth/register", {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
+  request("/api/v1/auth/register", { method: "POST", body: JSON.stringify(data) });
 
-// Your backend accepts JSON for login (not OAuth2 form-encoded)
 export const login = (data) =>
-  request("/api/v1/auth/login", {
-    method: "POST",
-    body: JSON.stringify({ email: data.email, password: data.password }),
-  });
+  request("/api/v1/auth/login", { method: "POST", body: JSON.stringify(data) });
 
 export const getMe = () => request("/api/v1/auth/me");
 
@@ -94,3 +67,10 @@ export const recalculateStats = () =>
 
 // Prediction
 export const getPrediction = (taskId) => request(`/api/v1/predict/${taskId}`);
+
+// ── Chat ──────────────────────────────────────────────────────
+export const sendChatMessage = (messages, task_id = null) =>
+  request("/api/v1/chat/", {
+    method: "POST",
+    body: JSON.stringify({ messages, task_id }),
+  });
