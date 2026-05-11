@@ -7,3 +7,5 @@ passlib[bcrypt]
 python-dotenv
 pydantic[email]
 Groq
+scikit-learn
+numpy
