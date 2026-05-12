@@ -14,7 +14,7 @@ import models
 
 router = APIRouter(prefix="/api/v1/predict", tags=["prediction"])
 
-_MODEL_PATH = os.path.join(os.path.dirname(__file__), "..", "risk_model.pkl")
+_MODEL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "risk_model.pkl")
 _model = None
 
 
