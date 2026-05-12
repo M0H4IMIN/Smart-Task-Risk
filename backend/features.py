@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 import models
 
@@ -19,11 +19,21 @@ CATEGORY_RATE_MAP = {
 }
 
 
+def _ensure_aware(dt):
+    """Make datetime timezone-aware. Supabase returns aware, local PG returns naive."""
+    if dt is None:
+        return None
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=timezone.utc)
+    return dt
+
+
 def extract_features(task: models.Task, stats: models.UserStats, db: Session) -> dict:
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     if task.deadline:
-        days_until_deadline = max((task.deadline - now).total_seconds() / 86400, 0)
+        deadline = _ensure_aware(task.deadline)
+        days_until_deadline = max((deadline - now).total_seconds() / 86400, 0)
     else:
         days_until_deadline = 30.0
 

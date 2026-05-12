@@ -5,7 +5,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from datetime import datetime
+from datetime import datetime, timezone
 
 from database import get_db
 from auth import get_current_user
@@ -44,8 +44,15 @@ STATS_TRIGGER_ACTIONS = {
 
 
 def _now():
-    # Naive datetime — matches timezone=False in models
-    return datetime.utcnow()
+    return datetime.now(timezone.utc)
+
+
+def _ensure_aware(dt):
+    if dt is None:
+        return None
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=timezone.utc)
+    return dt
 
 
 @router.post("/", response_model=schemas.SessionResponse, status_code=201)
@@ -72,7 +79,7 @@ def log_session(
 
     now = _now()
 
-    # Close the previous open session and calculate its duration
+    # Close previous open session
     open_session = (
         db.query(models.TaskSession)
         .filter(
@@ -83,11 +90,10 @@ def log_session(
     )
     if open_session:
         open_session.ended_at = now
-        # Both naive datetimes — subtraction always works correctly
-        delta = now - open_session.started_at
+        started = _ensure_aware(open_session.started_at)
+        delta = now - started
         open_session.duration_minutes = round(delta.total_seconds() / 60, 2)
 
-    # Update task status and metadata
     task.status           = ACTION_TO_STATUS[payload.action]
     task.last_session_at  = now
     task.days_since_active = 0
@@ -98,14 +104,11 @@ def log_session(
     if payload.action in [models.SessionAction.complete, models.SessionAction.abandon]:
         _update_actual_hours(task, db)
 
-    # Commit all of the above so duration is in DB before stats reads it
     db.commit()
 
-    # Now recalculate stats safely
     if payload.action in STATS_TRIGGER_ACTIONS:
         recalculate_user_stats(user_id=current_user.id, db=db)
 
-    # Create the new session row
     new_session = models.TaskSession(
         task_id=task_id,
         action=payload.action,
