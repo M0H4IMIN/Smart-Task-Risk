@@ -1,308 +1,306 @@
-# Smart Task Risk
+# Smart Task Risk Prediction System
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg?logo=fastapi)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18.2+-61DAFB.svg?logo=react)](https://react.dev/)
+[![React Native](https://img.shields.io/badge/React%20Native-Expo-000020.svg?logo=expo)](https://expo.dev/)
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB.svg?logo=python)](https://www.python.org/)
+[![Deployed](https://img.shields.io/badge/Deployed-Live-22c55e.svg)](https://smart-task-risk.vercel.app)
 
 > **Predict deadline risk before it predicts you.**
 
-Smart Task Risk is an intelligent task management system that uses machine learning to analyze your work patterns and predict the risk of missing deadlines. It doesn't just track tasks—it learns *how* you work and provides actionable insights to keep you on track.
+Smart Task Risk is an intelligent task management system that uses machine learning to analyze your behavioral patterns and predict the probability of missing deadlines — in real time, personalized to how YOU work.
 
 ---
 
-## Features
+## 🌍 Live Demo
+
+| Service | URL |
+|---------|-----|
+| **Web App** | https://smart-task-risk.vercel.app |
+| **API Docs** | https://smart-task-risk-backend.onrender.com/docs |
+| **GitHub** | https://github.com/M0H4IMIN/Smart-Task-Risk |
+
+> **Note:** Backend is hosted on Render's free tier — first load after inactivity may take 2-3 minutes to wake up.
+
+---
+
+## ✨ Features
 
 ### 🧠 ML-Powered Risk Prediction
-- Analyzes **12 behavioral features** to calculate deadline risk
-- Learns from your historical completion patterns
-- Provides personalized risk scores (Low/Medium/High/Critical)
+- Random Forest Classifier trained on 2,000 synthetic behavioral samples
+- 12 behavioral features including deadline pressure, session momentum, effort accuracy
+- Real-time risk scores: **Low / Medium / High / Critical**
+- Personalized action plans generated for each risk level
 
-### 📊 Behavioral Analytics Dashboard
-- Real-time stats on completion rates, abandon rates, and session patterns
-- Category-wise performance tracking (Coding, Studying, Editing, Writing, Design)
-- Effort accuracy measurement to improve your estimates
+### 🤖 AI Productivity Coach
+- Powered by **Groq / Llama 3.3 70B**
+- Knows your actual task history, completion rates, and behavioral patterns
+- Gives specific, data-driven advice — not generic productivity tips
+- Available on both web and mobile
 
-### 🎯 Smart Session Tracking
-- Track work sessions with automatic duration calculation
-- Support for pause/resume/complete/abandon workflows
-- Momentum tracking to detect procrastination patterns
+### 📊 Behavioral Analytics
+- Tracks completion rate, abandon rate, effort accuracy
+- Per-category performance (Coding, Studying, Editing, Writing, Design)
+- Average session duration and pause frequency
+- Historical task breakdown with visual charts
 
-### 💡 AI-Generated Action Plans
-- Context-aware recommendations based on your risk level
-- Category-specific tips (e.g., "Break into functions" for coding tasks)
-- Deadline pressure warnings with concrete next steps
+### ⏱ Smart Session Tracking
+- Actions: **start → pause → resume → complete / abandon / decline**
+- Automatic duration calculation for every session
+- Momentum tracking — detects procrastination via `days_since_active`
+- Live timer on mobile during active sessions
 
-### 🔐 Secure Authentication
-- JWT-based authentication with bcrypt password hashing
-- User-isolated data with ownership enforcement
-- Session management with secure token refresh
+### 📱 Multi-Platform
+- **Web App** — React + Vite, fully deployed on Vercel
+- **Mobile App** — React Native + Expo, testable via Expo Go
+- **REST API** — FastAPI with full Swagger documentation
+
+### 🛡 Secure Authentication
+- JWT-based auth with bcrypt password hashing
+- User-isolated data — users only see their own tasks
+- Token stored securely (SecureStore on mobile, localStorage on web)
 
 ---
 
-## Tech Stack
+## 🏗 Tech Stack
 
 | Layer | Technology |
 |-------|------------|
-| **Backend** | FastAPI, SQLAlchemy, Scikit-learn |
-| **Database** | PostgreSQL |
-| **Frontend** | React 18, Vite |
+| **Backend** | FastAPI, SQLAlchemy, Pydantic |
+| **Database** | PostgreSQL (Supabase) |
+| **ML Model** | Scikit-learn (Random Forest) |
+| **AI Coach** | Groq API (Llama 3.3 70B) |
+| **Web Frontend** | React 18, Vite |
+| **Mobile** | React Native, Expo |
 | **Auth** | python-jose (JWT), passlib (bcrypt) |
-| **ML Model** | Random Forest Classifier (12 features) |
+| **Deployment** | Render (backend), Vercel (frontend), Supabase (DB) |
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 smart-task-risk/
 ├── backend/
-│   ├── main.py                 # FastAPI app entry point
-│   ├── routers/
-│   │   ├── auth.py             # Register, login, user endpoints
-│   │   ├── tasks.py            # CRUD operations for tasks
-│   │   ├── sessions.py         # Session tracking logic
-│   │   ├── users.py            # User stats and profile
-│   │   └── predict.py          # ML risk prediction endpoint
-│   ├── models.py               # SQLAlchemy ORM models
-│   ├── schemas.py              # Pydantic validation schemas
-│   ├── auth.py                 # Password hashing, JWT utilities
-│   ├── database.py             # DB connection and session management
-│   ├── features.py             # Feature extraction for ML
-│   ├── guide.py                # AI recommendation generator
-│   ├── stats.py                # User stats calculation
-│   ├── train_model.py          # Model training script
-│   └── requirements.txt        # Python dependencies
+│   ├── main.py                    # FastAPI app entry point
+│   ├── database.py                # DB connection and session management
+│   ├── models.py                  # SQLAlchemy ORM models (4 tables)
+│   ├── schemas.py                 # Pydantic request/response schemas
+│   ├── auth.py                    # JWT utilities, password hashing
+│   ├── stats.py                   # UserStats recalculation logic
+│   ├── features.py                # ML feature extraction (12 features)
+│   ├── guide.py                   # AI action plan generator
+│   ├── train_model.py             # Model training script
+│   ├── requirements.txt
+│   └── routers/
+│       ├── auth.py                # Register, login, /me
+│       ├── tasks.py               # Task CRUD
+│       ├── sessions.py            # Session tracking + duration calc
+│       ├── users.py               # Stats endpoints
+│       ├── predict.py             # ML risk prediction
+│       └── chat.py                # AI coach (Groq)
 ├── frontend/
 │   ├── src/
+│   │   ├── api/client.js          # API client with token handling
+│   │   ├── context/AuthContext.jsx
 │   │   ├── pages/
-│   │   │   ├── LoginPage.jsx   # Authentication UI
-│   │   │   └── DashboardPage.jsx  # Main task dashboard
-│   │   ├── components/
-│   │   │   ├── TaskCard.jsx
-│   │   │   ├── CreateTaskModal.jsx
-│   │   │   └── StatsPanel.jsx
-│   │   ├── context/
-│   │   │   └── AuthContext.jsx  # Auth state management
-│   │   ├── api/
-│   │   │   └── client.js        # API client with token handling
-│   │   ├── App.jsx
-│   │   └── main.jsx
+│   │   │   ├── LoginPage.jsx
+│   │   │   ├── DashboardPage.jsx  # Main dashboard + nav bar
+│   │   │   └── StatsPage.jsx      # Analytics + charts
+│   │   └── components/
+│   │       ├── TaskCard.jsx       # Task card + predict button
+│   │       ├── CreateTaskModal.jsx
+│   │       ├── StatsPanel.jsx
+│   │       └── ChatPanel.jsx      # AI coach chat UI
 │   ├── package.json
 │   └── vite.config.js
-├── dataset/
-│   └── synthetic_task_dataset.csv  # Training data
-├── .gitignore
-└── README.md
+├── mobile/
+│   ├── App.js
+│   └── src/
+│       ├── api/client.js
+│       ├── context/AuthContext.jsx
+│       ├── screens/
+│       │   ├── LoginScreen.jsx
+│       │   ├── DashboardScreen.jsx
+│       │   ├── CreateTaskScreen.jsx
+│       │   ├── TaskDetailScreen.jsx  # Live timer + session actions
+│       │   ├── PredictScreen.jsx     # Risk meter + action plan
+│       │   ├── StatsScreen.jsx
+│       │   └── ChatScreen.jsx
+│       └── components/
+│           └── TaskCard.jsx
+└── dataset/
+    ├── synthetic_task_dataset.csv
+    └── synthetic_task_dataset.pdf
 ```
 
 ---
 
-## Quick Start
+## 🚀 Quick Start (Local)
 
 ### Prerequisites
-
 - Python 3.10+
 - PostgreSQL 14+
 - Node.js 18+
 
-### 1. Clone the Repository
-
+### 1. Clone
 ```bash
 git clone https://github.com/M0H4IMIN/Smart-Task-Risk.git
 cd Smart-Task-Risk
 ```
 
 ### 2. Backend Setup
-
 ```bash
 cd backend
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
 pip install -r requirements.txt
 
-# Configure environment variables
+# Create .env file
 cp .env.example .env
-# Edit .env with your database credentials
+# Edit .env with your DB credentials and API keys
 
-# Run database migrations
-python -c "from database import engine, Base; Base.metadata.create_all(bind=engine)"
-
-# Start the server
+# Start server
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### 3. Frontend Setup
-
 ```bash
 cd frontend
-
-# Install dependencies
 npm install
-
-# Start development server
 npm run dev
+# Opens at http://localhost:3000
 ```
 
-### 4. Train the ML Model (Optional)
+### 4. Mobile Setup
+```bash
+cd mobile
+npm install
+npx expo start --web   # Test in browser
+npx expo start         # Scan QR with Expo Go on your phone
+```
 
+### 5. Train ML Model
 ```bash
 cd backend
 python train_model.py
+# Generates risk_model.pkl
 ```
 
 ---
 
-## API Endpoints
+## 🔌 API Reference
 
-### Authentication
+### Auth
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `POST` | `/api/v1/auth/register` | Create new account |
-| `POST` | `/api/v1/auth/login` | Get JWT token |
-| `GET` | `/api/v1/auth/me` | Get current user |
+| POST | `/api/v1/auth/register` | Create account |
+| POST | `/api/v1/auth/login` | Get JWT token |
+| GET | `/api/v1/auth/me` | Current user |
 
 ### Tasks
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `POST` | `/api/v1/tasks/` | Create task |
-| `GET` | `/api/v1/tasks/` | List all tasks (filterable) |
-| `GET` | `/api/v1/tasks/{id}` | Get single task |
-| `PUT` | `/api/v1/tasks/{id}` | Update task |
-| `DELETE` | `/api/v1/tasks/{id}` | Delete task |
+| POST | `/api/v1/tasks/` | Create task |
+| GET | `/api/v1/tasks/` | List tasks (filterable) |
+| GET | `/api/v1/tasks/{id}` | Get single task |
+| PUT | `/api/v1/tasks/{id}` | Update task |
+| DELETE | `/api/v1/tasks/{id}` | Delete task + sessions |
 
 ### Sessions
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `POST` | `/api/v1/tasks/{id}/sessions/` | Log session action |
-| `GET` | `/api/v1/tasks/{id}/sessions/` | Get session history |
+| POST | `/api/v1/tasks/{id}/sessions/` | Log action (start/pause/resume/complete/abandon/decline) |
+| GET | `/api/v1/tasks/{id}/sessions/` | Session history |
 
-### Prediction
+### Prediction & AI
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/api/v1/predict/{task_id}` | Get risk prediction |
+| GET | `/api/v1/predict/{id}` | Risk score + action plan |
+| POST | `/api/v1/chat/` | AI coach conversation |
 
-### User Stats
+### Stats
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/api/v1/users/me/stats` | Get behavioral stats |
-| `POST` | `/api/v1/users/me/stats/recalculate` | Force stats recalculation |
+| GET | `/api/v1/users/me/stats` | Behavioral fingerprint |
+| POST | `/api/v1/users/me/stats/recalculate` | Force recalculation |
 
 ---
 
-## ML Model Details
+## 🧬 ML Model Details
 
-### Features Used for Prediction
+### Algorithm
+Random Forest Classifier with 150 estimators, max depth 8, balanced class weights.
 
-1. **Task Priority** (1-4 scale)
-2. **Days Until Deadline**
-3. **Hours Remaining Ratio**
-4. **Deadline Pressure** (hours needed / days left)
-5. **Session Count** (number of work sessions)
-6. **Days Since Active** (procrastination indicator)
-7. **User Completion Rate** (historical)
-8. **User Abandon Rate** (historical)
-9. **Category Completion Rate** (domain-specific)
-10. **Avg Pauses Per Task** (focus indicator)
-11. **Avg Effort Accuracy** (estimation skill)
-12. **Avg Session Duration** (work pattern)
+### 12 Input Features
+
+| Feature | Range | Description |
+|---------|-------|-------------|
+| priority | 1-4 | Task priority level |
+| days_until_deadline | 0-30 | Days remaining |
+| hours_remaining_ratio | 0-1 | Remaining / estimated work |
+| deadline_pressure | 0-10 | Hours needed per day remaining |
+| session_count | 0-20 | Total sessions logged |
+| days_since_active | 0-15 | Inactivity / procrastination signal |
+| user_completion_rate | 0-1 | Historical completion rate |
+| user_abandon_rate | 0-0.6 | Historical abandon rate |
+| category_completion_rate | 0-1 | Domain-specific completion rate |
+| avg_pauses_per_task | 0-8 | Focus quality indicator |
+| avg_effort_accuracy | 0.5-2.5 | Estimation skill (1.0 = perfect) |
+| avg_session_duration | 0-120 | Average session length (minutes) |
 
 ### Risk Labels
-
-| Score Range | Label |
-|-------------|-------|
-| < 30% | Low |
-| 30-55% | Medium |
-| 55-75% | High |
-| > 75% | Critical |
+| Score | Label |
+|-------|-------|
+| < 30% | 🟢 Low |
+| 30-55% | 🟡 Medium |
+| 55-75% | 🔴 High |
+| > 75% | 🚨 Critical |
 
 ---
 
-## Environment Variables
-
-Create a `backend/.env` file:
+## ⚙ Environment Variables
 
 ```env
-DATABASE_URL=postgresql://postgres:your_password@localhost:5432/smart-task-risk
-SECRET_KEY=your-secret-key-here-use-openssl-rand-hex-32
+DATABASE_URL=postgresql://postgres:password@localhost:5432/smart-task-risk
+SECRET_KEY=your-secret-key-min-32-chars
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=1440
-```
-
-> ⚠️ **Never commit `.env` to version control.** The file is gitignored by default.
-
----
-
-## Development
-
-### Running Tests
-
-```bash
-cd backend
-pytest
-```
-
-### Code Style
-
-```bash
-# Backend
-black backend/
-flake8 backend/
-
-# Frontend
-npm run lint
+GROQ_API_KEY=gsk_your_groq_api_key
 ```
 
 ---
 
-## Roadmap
+## 🗺 Roadmap
 
-- [ ] **Mobile App** - React Native client (coming soon)
-- [ ] **Browser Extension** - Quick task capture from any webpage
-- [ ] **Team Features** - Shared projects and collaboration
-- [ ] **Calendar Integration** - Google Calendar, Outlook sync
-- [ ] **Notifications** - Push alerts for high-risk tasks
-- [ ] **Advanced ML** - Neural network model with temporal patterns
-
----
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+- [x] Web App (React)
+- [x] REST API (FastAPI)
+- [x] ML Risk Prediction (Scikit-learn)
+- [x] AI Productivity Coach (Groq/Llama)
+- [x] Mobile App (React Native + Expo)
+- [x] Full Cloud Deployment
+- [ ] Push Notifications (Expo Notifications)
+- [ ] PWA Support (installable web app)
+- [ ] Calendar Integration (Google Calendar sync)
+- [ ] Team Features (shared projects)
+- [ ] Real training data (retrain on actual user behavior)
 
 ---
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## Author
+## 👤 Author
 
 **S.M. Mohaimin**
 
 [![GitHub](https://img.shields.io/badge/GitHub-M0H4IMIN-181717.svg?logo=github)](https://github.com/M0H4IMIN)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Mohaimin-0077B5.svg?logo=linkedin)](https://linkedin.com/in/mohaimin)
 
 ---
 
-## Acknowledgments
+## 📄 License
 
-- Built with [FastAPI](https://fastapi.tiangolo.com/) - Modern Python web framework
-- UI powered by [React](https://react.dev/) - Library for user interfaces
-- ML powered by [Scikit-learn](https://scikit-learn.org/) - Machine learning library
+MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
 <p align="center">
-  <strong>If this project helps you, please give it a ⭐️ on GitHub!</strong>
+  <strong>Built in 16 days · 3 platforms · Full Stack + ML + AI</strong><br/>
+  If this project helped you, give it a ⭐️ on GitHub!
 </p>
